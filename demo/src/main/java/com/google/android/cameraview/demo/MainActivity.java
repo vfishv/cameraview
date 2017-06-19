@@ -30,6 +30,8 @@ import android.support.annotation.StringRes;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
@@ -120,6 +122,14 @@ public class MainActivity extends AppCompatActivity implements
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayShowTitleEnabled(false);
+        }
+
+        float alpha = 0.1f;
+        if (mCameraView != null) {
+            mCameraView.setAlpha(alpha);
+        }
+        if (fab != null && Build.VERSION.SDK_INT>11) {
+            fab.setAlpha(alpha);
         }
     }
 
@@ -250,13 +260,13 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         public void onPictureTaken(CameraView cameraView, final byte[] data) {
             Log.d(TAG, "onPictureTaken " + data.length);
-            Toast.makeText(cameraView.getContext(), R.string.picture_taken, Toast.LENGTH_SHORT)
+            Toast.makeText(cameraView.getContext(), R.string.smile, Toast.LENGTH_SHORT)
                     .show();
             getBackgroundHandler().post(new Runnable() {
                 @Override
                 public void run() {
                     File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                            "picture.jpg");
+                            "picture_"+System.currentTimeMillis() + ".jpg");
                     OutputStream os = null;
                     try {
                         os = new FileOutputStream(file);

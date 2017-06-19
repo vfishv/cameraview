@@ -12,6 +12,7 @@
     limitations under the License.
 -->
 <resources>
+    <color name="transparent">#00FFFFFF</color>
     <color name="primary">#3F51B5</color>
     <color name="primaryDark">#303F9F</color>
     <color name="accent">#4CAF50</color>
