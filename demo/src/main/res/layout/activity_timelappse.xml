@@ -19,7 +19,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/transparent"
-    tools:context=".TimelapseActivity">
+    tools:context="com.folderv.timelapse.TimelapseActivity">
 
     <com.google.android.cameraview.CameraView
         android:id="@+id/camera"

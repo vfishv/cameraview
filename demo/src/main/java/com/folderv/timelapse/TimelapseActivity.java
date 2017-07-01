@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.android.cameraview.demo;
+package com.folderv.timelapse;
 
 import android.Manifest;
 import android.app.Dialog;
@@ -45,6 +45,8 @@ import android.widget.Toast;
 
 import com.google.android.cameraview.AspectRatio;
 import com.google.android.cameraview.CameraView;
+import com.google.android.cameraview.demo.AspectRatioFragment;
+import com.google.android.cameraview.demo.R;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -97,7 +99,7 @@ public class TimelapseActivity extends AppCompatActivity implements
     private Handler mBackgroundHandler;
     private Handler handler = new Handler();
 
-    Runnable timelapse = new Runnable() {
+    private Runnable timelapse = new Runnable() {
         @Override
         public void run() {
             for (;recording;){
@@ -124,6 +126,8 @@ public class TimelapseActivity extends AppCompatActivity implements
         }
     };
 
+    private Thread recordThread = new Thread(timelapse);
+
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -132,7 +136,7 @@ public class TimelapseActivity extends AppCompatActivity implements
                     recording = !recording;
                     if(recording){
                         setScreenBrightness(0);
-                        new Thread(timelapse).start();
+                        recordThread.start();
                     }
                     else {
                         setScreenBrightness(100);
