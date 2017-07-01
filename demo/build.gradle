@@ -41,6 +41,8 @@ dependencies {
     compile "com.android.support:design:$supportLibraryVersion"
     compile project(':library')
 
+    compile 'com.orhanobut:logger:1.15'
+
     // Tests
     testCompile 'junit:junit:4.12'
     androidTestCompile('com.android.support.test:runner:0.5') {
