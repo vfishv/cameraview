@@ -50,6 +50,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.Set;
 
 
@@ -62,6 +63,10 @@ public class TimelapseActivity extends AppCompatActivity implements
         AspectRatioFragment.Listener {
 
     private static final String TAG = "MainActivity";
+
+    private boolean recording = false;
+    private int timeInterval = 2000;// 2s
+    private int counter = 0;
 
     private static final int REQUEST_CAMERA_PERMISSION = 1;
 
@@ -90,14 +95,47 @@ public class TimelapseActivity extends AppCompatActivity implements
     private CameraView mCameraView;
 
     private Handler mBackgroundHandler;
+    private Handler handler = new Handler();
+
+    Runnable timelapse = new Runnable() {
+        @Override
+        public void run() {
+            for (;recording;){
+                try {
+                    Thread.sleep(timeInterval);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mCameraView != null) {
+                            mCameraView.takePicture();
+                            counter ++;
+                            Log.e(TAG, "counter: " + counter);
+                        }
+                    }
+                });
+
+                if(isFinishing()){
+                    break;
+                }
+            }
+        }
+    };
 
     private View.OnClickListener mOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.take_picture:
-                    if (mCameraView != null) {
-                        mCameraView.takePicture();
+                    recording = !recording;
+                    if(recording){
+                        setScreenBrightness(0);
+                        new Thread(timelapse).start();
+                    }
+                    else {
+                        setScreenBrightness(100);
                     }
                     break;
             }
@@ -134,6 +172,8 @@ public class TimelapseActivity extends AppCompatActivity implements
 //        if (fab != null && Build.VERSION.SDK_INT>11) {
 //            fab.setAlpha(alpha);
 //        }
+
+
     }
 
     @Override
@@ -146,14 +186,20 @@ public class TimelapseActivity extends AppCompatActivity implements
                 Manifest.permission.CAMERA)) {
             ConfirmationDialogFragment
                     .newInstance(R.string.camera_permission_confirmation,
-                            new String[]{Manifest.permission.CAMERA},
+                            new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE},
                             REQUEST_CAMERA_PERMISSION,
                             R.string.camera_permission_not_granted)
                     .show(getSupportFragmentManager(), FRAGMENT_DIALOG);
         } else {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA},
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                     REQUEST_CAMERA_PERMISSION);
         }
+    }
+
+    public void setScreenBrightness(int value) {
+        WindowManager.LayoutParams params = getWindow().getAttributes();
+        params.screenBrightness = value / 255f;
+        getWindow().setAttributes(params);
     }
 
     @Override
@@ -180,7 +226,7 @@ public class TimelapseActivity extends AppCompatActivity implements
             @NonNull int[] grantResults) {
         switch (requestCode) {
             case REQUEST_CAMERA_PERMISSION:
-                if (permissions.length != 1 || grantResults.length != 1) {
+                if (permissions.length < 1 || grantResults.length < 1) {
                     throw new RuntimeException("Error on requesting camera permission.");
                 }
                 if (grantResults[0] != PackageManager.PERMISSION_GRANTED) {
@@ -263,13 +309,16 @@ public class TimelapseActivity extends AppCompatActivity implements
         @Override
         public void onPictureTaken(CameraView cameraView, final byte[] data) {
             Log.d(TAG, "onPictureTaken " + data.length);
-            Toast.makeText(cameraView.getContext(), R.string.smile, Toast.LENGTH_SHORT)
+            Toast.makeText(cameraView.getContext(), getString(R.string.smile) + "    " + counter, Toast.LENGTH_SHORT)
                     .show();
             getBackgroundHandler().post(new Runnable() {
                 @Override
                 public void run() {
-                    File file = new File(getExternalFilesDir(Environment.DIRECTORY_PICTURES),
-                            "picture_"+System.currentTimeMillis() + ".jpg");
+                    SimpleDateFormat sDateFormat = new SimpleDateFormat("yy-MM-dd hh_mm_ss");
+                    String date = sDateFormat.format(new java.util.Date());
+                    File folder = new File(Environment.getExternalStorageDirectory(), "timelapse");
+                    folder.mkdir();
+                    File file = new File(folder, date + ".jpg");
                     OutputStream os = null;
                     try {
                         os = new FileOutputStream(file);
