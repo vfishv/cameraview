@@ -112,7 +112,11 @@ public class TimelapseActivity extends AppCompatActivity implements
                     @Override
                     public void run() {
                         if (mCameraView != null) {
-                            mCameraView.takePicture();
+                            try {
+                                mCameraView.takePicture();
+                            } catch (IllegalStateException e) {
+                                e.printStackTrace();
+                            }
                             counter ++;
                             Log.e(TAG, "counter: " + counter);
                         }
@@ -135,8 +139,12 @@ public class TimelapseActivity extends AppCompatActivity implements
                 case R.id.take_picture:
                     recording = !recording;
                     if(recording){
-                        setScreenBrightness(0);
-                        recordThread.start();
+                        setScreenBrightness(10);
+                        try {
+                            recordThread.start();
+                        } catch (IllegalThreadStateException e) {
+                            e.printStackTrace();
+                        }
                     }
                     else {
                         setScreenBrightness(100);
