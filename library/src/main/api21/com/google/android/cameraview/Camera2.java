@@ -587,6 +587,8 @@ class Camera2 extends CameraViewImpl {
             mCaptureSession.capture(mPreviewRequestBuilder.build(), mCaptureCallback, null);
         } catch (CameraAccessException e) {
             Log.e(TAG, "Failed to lock focus.", e);
+        } catch (Exception e) {
+            Log.e(TAG, "Failed to lock focus.", e);
         }
     }
 

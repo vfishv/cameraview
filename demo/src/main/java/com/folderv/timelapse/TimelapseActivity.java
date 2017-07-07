@@ -318,11 +318,13 @@ public class TimelapseActivity extends AppCompatActivity implements
             getBackgroundHandler().post(new Runnable() {
                 @Override
                 public void run() {
-                    SimpleDateFormat sDateFormat = new SimpleDateFormat("yy-MM-dd hh_mm_ss");
+                    SimpleDateFormat sDateFormat = new SimpleDateFormat("yy-MM-dd");
                     String date = sDateFormat.format(new java.util.Date());
                     File folder = new File(Environment.getExternalStorageDirectory(), "timelapse");
                     folder = new File(folder, "" + date);
                     folder.mkdir();
+                    sDateFormat = new SimpleDateFormat("yy-MM-dd hh_mm_ss");
+                    date = sDateFormat.format(new java.util.Date());
                     File file = new File(folder, date + ".jpg");
                     OutputStream os = null;
                     try {
