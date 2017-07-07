@@ -62,7 +62,7 @@ public final class Utils {
 			return null;
 		}
 		File sd = Environment.getExternalStorageDirectory();
-		File dir = new File(sd, "timelapse_log");
+		File dir = new File(sd, "timelapse");
 		File sub = new File(dir, subName);
 		sub.mkdirs();
 		return sub;

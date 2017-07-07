@@ -52,6 +52,8 @@ public class Timelapse extends Application {
         super.onCreate();
 
         instance = this;
+
+        initCrashLog();
     }
 
     private void initCrashLog(){
