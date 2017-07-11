@@ -33,4 +33,10 @@
         android:title="@string/switch_camera"
         app:showAsAction="ifRoom"/>
 
+    <item
+        android:id="@+id/setting"
+        android:icon="@drawable/ic_settings"
+        android:title="@string/setting"
+        app:showAsAction="ifRoom"/>
+
 </menu>

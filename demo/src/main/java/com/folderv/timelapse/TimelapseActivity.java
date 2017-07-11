@@ -36,6 +36,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -43,6 +45,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.cameraview.AspectRatio;
 import com.google.android.cameraview.CameraView;
 import com.google.android.cameraview.demo.AspectRatioFragment;
@@ -185,6 +188,10 @@ public class TimelapseActivity extends AppCompatActivity implements
 //            fab.setAlpha(alpha);
 //        }
 
+        if (mCameraView != null) {
+            mCurrentFlash = 1;
+            mCameraView.setFlash(FLASH_OPTIONS[mCurrentFlash]);
+        }
 
     }
 
@@ -283,6 +290,29 @@ public class TimelapseActivity extends AppCompatActivity implements
                     mCameraView.setFacing(facing == CameraView.FACING_FRONT ?
                             CameraView.FACING_BACK : CameraView.FACING_FRONT);
                 }
+                return true;
+            case R.id.setting:
+                new MaterialDialog.Builder(this)
+                        //.title(R.string.input)
+                        //.content(R.string.input_content)
+                        .inputType(InputType.TYPE_CLASS_NUMBER)
+                        .input("", "", new MaterialDialog.InputCallback() {
+                            @Override
+                            public void onInput(MaterialDialog dialog, CharSequence input) {
+                                // Do something
+                                if(TextUtils.isEmpty(input)){
+                                    return;
+                                }
+                                int interval = 0;
+                                try {
+                                    interval = Integer.parseInt(input.toString());
+                                } catch (NumberFormatException e) {
+                                    e.printStackTrace();
+                                }
+                                timeInterval = 1000 * interval;
+                                Toast.makeText(TimelapseActivity.this, "Interval:" + interval + "s", Toast.LENGTH_SHORT).show();
+                            }
+                        }).show();
                 return true;
         }
         return super.onOptionsItemSelected(item);

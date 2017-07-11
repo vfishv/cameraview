@@ -43,6 +43,8 @@ dependencies {
 
     compile 'com.orhanobut:logger:1.15'
 
+    compile 'com.afollestad.material-dialogs:core:0.9.4.5'
+
     // Tests
     testCompile 'junit:junit:4.12'
     androidTestCompile('com.android.support.test:runner:0.5') {
